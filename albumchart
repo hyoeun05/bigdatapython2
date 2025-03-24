@@ -1,0 +1,25 @@
+import requests
+from bs4 import BeautifulSoup
+
+# 한터차트 실시간 음반 판매량 차트 URL
+url = "https://www.hanteochart.com/chart/album/real"
+
+# 웹페이지 요청
+response = requests.get(url)
+
+# 요청이 성공했는지 확인
+if response.status_code == 200:
+    # HTML 파싱
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    # 예시: 앨범 순위 정보 추출 (실제 HTML 구조에 따라 수정 필요)
+    albums = soup.find_all("div", class_="album-info")
+    
+    for album in albums:
+        rank = album.find("span", class_="rank").get_text()
+        title = album.find("span", class_="title").get_text()
+        artist = album.find("span", class_="artist").get_text()
+        sales = album.find("span", class_="sales").get_text()
+        print(f"{rank}위: {title} - {artist} ({sales}장 판매)")
+else:
+    print("페이지를 가져오지 못했습니다.")
