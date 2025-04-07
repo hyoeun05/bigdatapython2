@@ -29,3 +29,9 @@ if response.status_code == 200:
 ai_song = random.choice(songs)
 
 print(f"제가 추천한 곡은 {ai_song}입니다.")
+
+# 1. 멜론 100곡 출력
+# 2. 멜론 50곡 출력
+# 3. 멜론 10곡 출력
+# 4. AI 추천곡 출력
+# 5. 가수 이름 검색
