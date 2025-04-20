@@ -114,3 +114,34 @@ def m_random(d):
         print(f'\n[추천 곡: {random_song[1]} | 아티스트: {random_song[2]}]')
     else:
         print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
+        d = "<AI 검색>"
+
+
+    def m_search(e):
+        print(e)
+        time.sleep(1)
+    s = input("[검색하고 싶은 가수의 이름을 입력하세요.]: ")
+    print(f"[<{s}>의 노래를 검색 중이에요...]")
+    time.sleep(1)
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        songs = soup.select('tr[data-song-no]')
+        found_songs = []
+
+        for song in songs:
+            artist = song.select_one('div.ellipsis.rank02 a').text.strip()
+            if s.lower() in artist.lower():
+                rank = song.select_one('span.rank').text.strip()
+                title = song.select_one('div.ellipsis.rank01 a').text.strip()
+                found_songs.append((rank, title, artist))
+
+        if found_songs:
+            print(f"[<{s}>의 노래 목록이에요.]")
+            for song in found_songs:
+                print(f'{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}')
+        else:
+            print(f"[TOP 100곡 내 <{s}>의 노래가 없어요.]")
+    else:
+        print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
+        e = "<가수 이름 검색>"
