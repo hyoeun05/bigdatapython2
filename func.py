@@ -117,15 +117,23 @@ def m_random(d):
         d = "<AI 검색>"
 
 
-    def m_search(e):
+def m_search(e):
         print(e)
         time.sleep(1)
-    s = input("[검색하고 싶은 가수의 이름을 입력하세요.]: ")
-    print(f"[<{s}>의 노래를 검색 중이에요...]")
-    time.sleep(1)
+        s = input("[검색하고 싶은 가수의 이름을 입력하세요.]: ")
+        print(f"[<{s}>의 노래를 검색 중이에요...]")
+        time.sleep(1)
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
+        headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+}
+        url = 'https://www.melon.com/chart/index.htm'
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+
         songs = soup.select('tr[data-song-no]')
         found_songs = []
 
@@ -142,6 +150,5 @@ def m_random(d):
                 print(f'{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}')
         else:
             print(f"[TOP 100곡 내 <{s}>의 노래가 없어요.]")
-    else:
-        print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
+
         e = "<가수 이름 검색>"
