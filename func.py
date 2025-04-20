@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import random
 import time
+import csv
 
 def m100(a):
     print(a)
@@ -28,7 +29,6 @@ def m100(a):
         print(f'{rank}위 | 제목: {title} | 아티스트: {artist}')
         a = "<멜론 차트 TOP 100곡>"
 
-        
         
 def m50(b):
     print(b)
@@ -152,3 +152,45 @@ def m_search(e):
             print(f"[TOP 100곡 내 <{s}>의 노래가 없어요.]")
 
         e = "<가수 이름 검색>"
+
+def m_file(f):
+        print(f)
+        import requests
+        from bs4 import BeautifulSoup
+
+# 멜론 차트 URL
+url = 'https://www.melon.com/chart/index.htm'
+
+# HTTP 요청을 위한 헤더 (봇 차단 방지)
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+}
+
+# 웹 페이지 요청
+response = requests.get(url, headers=headers)
+
+# 요청 성공 여부 확인
+if response.status_code == 200:
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # 노래 목록 선택
+    songs = soup.select('tr[data-song-no]')
+    song_list = []
+
+    for song in songs:
+        rank = song.select_one('span.rank').text.strip()
+        title = song.select_one('div.ellipsis.rank01 a').text.strip()
+        artist = song.select_one('div.ellipsis.rank02 a').text.strip()
+        song_list.append((rank, title, artist))
+
+    # CSV 파일로 저장
+    
+    with open("melon_chart.csv", "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["순위", "제목", "아티스트"])
+        writer.writerows(song_list)
+
+    
+    print("🎵 멜론 차트 100위 리스트를 'melon_chart.csv' 파일로 저장했습니다!")
+
+    f = "<파일에 저장 (멜론100)>"
