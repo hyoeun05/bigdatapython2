@@ -4,193 +4,91 @@ import random
 import time
 import csv
 
-def m100(a):
-    print(a)
-    time.sleep(1)
-
-    a = "<멜론 차트 TOP 100곡>"
+# 멜론 차트 크롤링 함수
+def get_melon_chart(limit):
     url = 'https://www.melon.com/chart/index.htm'
-    headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-}
+    headers = {'User-Agent': 'Mozilla/5.0'}
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-
-    songs = soup.select('tr[data-song-no]')
-
-    for index, song in enumerate(songs):
-        if index >= 100:
-            break
-        rank = song.select_one('span.rank').text.strip()
-        title = song.select_one('div.ellipsis.rank01 a').text.strip()
-        artist = song.select_one('div.ellipsis.rank02 a').text.strip()
-        print(f'{rank}위 | 제목: {title} | 아티스트: {artist}')
-        a = "<멜론 차트 TOP 100곡>"
-
-        
-def m50(b):
-    print(b)
-    time.sleep(1)
-
-    b = "<멜론 차트 TOP 50곡>"
-    url = 'https://www.melon.com/chart/index.htm'
-    headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-}
-
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-    songs = soup.select('tr[data-song-no]')
-
-    for index, song in enumerate(songs):
-        if index >= 50:
-            break
-        rank = song.select_one('span.rank').text.strip()
-        title = song.select_one('div.ellipsis.rank01 a').text.strip()
-        artist = song.select_one('div.ellipsis.rank02 a').text.strip()
-        print(f'{rank}위 | 제목: {title} | 아티스트: {artist}')
-        b = "<멜론 차트 TOP 50곡>"
-
-        
-def m10(c):
-    print(c)
-    time.sleep(1)
-
-    c= "<멜론차트 TOP 10곡>"
-    url = 'https://www.melon.com/chart/index.htm'
-    headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-}
-
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-    songs = soup.select('tr[data-song-no]')
-
-    for index, song in enumerate(songs):
-        if index >= 10:
-            break
-        rank = song.select_one('span.rank').text.strip()
-        title = song.select_one('div.ellipsis.rank01 a').text.strip()
-        artist = song.select_one('div.ellipsis.rank02 a').text.strip()
-        print(f'{rank}위 | 제목: {title} | 아티스트: {artist}')
-        c = "<멜론 차트 TOP 10곡>"
-
-def m_random(d):
-    print(d)
-    time.sleep(1)
-    print("[좋아요! 제가 열심히 찾아서 사용자님께 노래를 한 곡 추천할게요.]")
-    time.sleep(1)
-    print(f"[두구두구둥...]")
-
-    headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-}
-    url = 'https://www.melon.com/chart/index.htm'
-
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-
         songs = soup.select('tr[data-song-no]')
-        song_list = []
+        
+        song_list = [(song.select_one('span.rank').text.strip(),
+                      song.select_one('div.ellipsis.rank01 a').text.strip(),
+                      song.select_one('div.ellipsis.rank02 a').text.strip()) 
+                     for song in songs[:limit]]
 
-        for song in songs:
-            rank = song.select_one('span.rank').text.strip()
-            title = song.select_one('div.ellipsis.rank01 a').text.strip()
-            artist = song.select_one('div.ellipsis.rank02 a').text.strip()
-            song_list.append((rank, title, artist))
-
-        random_song = random.choice(song_list)
-        time.sleep(1)
-        print(f"[이 노래가 좋을 거 같아요!]")
-        time.sleep(1)
-        print(f'\n[추천 곡: {random_song[1]} | 아티스트: {random_song[2]}]')
+        return song_list
     else:
-        print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
-        d = "<AI 검색>"
+        print(f"🚨 웹 페이지를 가져오는 데 실패했습니다. 상태 코드: {response.status_code}")
+        return []
 
+# TOP 100 출력
+def m100():
+    print("\n🎵 멜론 차트 TOP 100곡")
+    time.sleep(1)
+    song_list = get_melon_chart(100)
+    for song in song_list:
+        print(f"{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}")
 
-def m_search(e):
-        print(e)
-        time.sleep(1)
-        s = input("[검색하고 싶은 가수의 이름을 입력하세요.]: ")
-        print(f"[<{s}>의 노래를 검색 중이에요...]")
-        time.sleep(1)
+# TOP 50 출력
+def m50():
+    print("\n🎵 멜론 차트 TOP 50곡")
+    time.sleep(1)
+    song_list = get_melon_chart(50)
+    for song in song_list:
+        print(f"{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}")
 
-        headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-}
-        url = 'https://www.melon.com/chart/index.htm'
+# TOP 10 출력
+def m10():
+    print("\n🎵 멜론 차트 TOP 10곡")
+    time.sleep(1)
+    song_list = get_melon_chart(10)
+    for song in song_list:
+        print(f"{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}")
 
-        response = requests.get(url, headers=headers)
+# 랜덤 노래 추천
+def m_random():
+    print("\n🎵 랜덤 노래 추천!")
+    time.sleep(1)
+    song_list = get_melon_chart(100)
+    if song_list:
+        random_song = random.choice(song_list)
+        print(f"\n🎵 추천 곡: {random_song[1]} | 아티스트: {random_song[2]}")
+    else:
+        print("🚨 추천할 노래가 없습니다.")
 
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
+# 가수 검색
+def m_search():
+    s = input("\n🔎 검색할 가수 이름을 입력하세요: ")
+    print(f"🎵 <{s}>의 노래 검색 중...")
+    time.sleep(1)
+    
+    song_list = get_melon_chart(100)
+    found_songs = [song for song in song_list if s.lower() in song[2].lower()]
 
-        songs = soup.select('tr[data-song-no]')
-        found_songs = []
+    if found_songs:
+        print(f"\n🎵 <{s}>의 노래 목록:")
+        for song in found_songs:
+            print(f"{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}")
+    else:
+        print(f"🚨 TOP 100곡 내 <{s}>의 노래가 없습니다.")
 
-        for song in songs:
-            artist = song.select_one('div.ellipsis.rank02 a').text.strip()
-            if s.lower() in artist.lower():
-                rank = song.select_one('span.rank').text.strip()
-                title = song.select_one('div.ellipsis.rank01 a').text.strip()
-                found_songs.append((rank, title, artist))
-
-        if found_songs:
-            print(f"[<{s}>의 노래 목록이에요.]")
-            for song in found_songs:
-                print(f'{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}')
-        else:
-            print(f"[TOP 100곡 내 <{s}>의 노래가 없어요.]")
-
-        e = "<가수 이름 검색>"
-
-def m_file(f):
-        print(f)
-        import requests
-        from bs4 import BeautifulSoup
-
-# 멜론 차트 URL
-url = 'https://www.melon.com/chart/index.htm'
-
-# HTTP 요청을 위한 헤더 (봇 차단 방지)
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-}
-
-# 웹 페이지 요청
-response = requests.get(url, headers=headers)
-
-# 요청 성공 여부 확인
-if response.status_code == 200:
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    # 노래 목록 선택
-    songs = soup.select('tr[data-song-no]')
-    song_list = []
-
-    for song in songs:
-        rank = song.select_one('span.rank').text.strip()
-        title = song.select_one('div.ellipsis.rank01 a').text.strip()
-        artist = song.select_one('div.ellipsis.rank02 a').text.strip()
-        song_list.append((rank, title, artist))
-
-    # CSV 파일로 저장
+# 파일로 저장
+def m_file():
+    print("\n💾 멜론 차트 100곡을 CSV 파일로 저장 중...")
+    time.sleep(1)
+    
+    song_list = get_melon_chart(100)
     
     with open("melon_chart.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(["순위", "제목", "아티스트"])
         writer.writerows(song_list)
 
-    
-    print("🎵 멜론 차트 100위 리스트를 'melon_chart.csv' 파일로 저장했습니다!")
+    print("✅ 'melon_chart.csv' 파일 저장 완료!")
 
-    f = "<파일에 저장 (멜론100)>"
+# 🔥 사용자 입력 기반 실행
+while True:
+    print("\n")

@@ -37,3 +37,4 @@ else:
 
     for i in range(100):
         print(f"{songs[i][0]}, {songs[i][1]}, {songs[i][2]}")
+    
