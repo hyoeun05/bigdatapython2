@@ -17,7 +17,7 @@ def get_weather(lat, lon):
     """좌표를 이용해 날씨 정보를 가져옴"""
     url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
     response = requests.get(url)
-    
+
     if response.status_code != 200:
         print("날씨 API 요청 실패")
         return {}
@@ -42,6 +42,7 @@ def main():
         print(f"\n[{city}]의 현재 날씨:")
         print(f"기온: {weather['temperature']}°C")
         print(f"풍속: {weather['windspeed']} km/h")
+        print(f"강수량: {weather.get('precipitation', 0)} mm")  # 강수량 추가
         print(f"날씨 코드: {weather['weathercode']}")
     else:
         print("날씨 정보를 가져오지 못했습니다.")
